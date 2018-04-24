@@ -1,0 +1,148 @@
+#%RAML 1.0
+version: v1
+title: account-mgmt-xp
+baseUri: https://mocksvc.mulesoft.com/mocks/12ebba8b-00ae-4222-a152-0af690f1bfcf/api # baseUri: http://acme.com/api
+
+types: 
+  bankAccount:
+    example: !include bank-account.json
+  customer:
+    example: !include customer.json
+  transfer:
+    example: !include transfer.json
+    
+resourceTypes: 
+   collection:
+     get:
+      queryParameters:
+        <<queryParamName>>:
+          required: false
+
+
+/bankAccounts:
+   /{account_id}:
+      uriParameters:
+         account_id:
+           type:  string
+           example: "IT49030150320000000344"
+           minLength: 22
+           maxLength: 22
+      put:
+        description: "Update a bank account"
+        body: 
+          application/json:
+            type: bankAccount
+        responses: 
+          204:
+      /transfers:
+        get:
+          queryParameters: 
+            fromDate:
+              type: date-only
+              required: false
+              example: 2018-02-28
+            toDate:
+              type: date-only
+              required: false
+            direction:
+              description: "Transfer direction"
+              type: string
+              enum: [incoming,outgoing]
+              required: false
+          responses: 
+            200:
+              body: 
+                application/json:
+                  type: transfer[]
+
+/customers:
+   type: 
+   post:
+    body: 
+      application/json:
+         type: customer
+    responses: 
+      201:          
+   get:
+     description: "Get all customers"
+     queryParameters: 
+        readLimit:
+           type: number
+           default: 100
+           required: false
+           maximum: 1000
+     responses: 
+        200:
+          body: 
+             application/json:
+                type: customer[]
+   /{customer_id}:
+      get:
+        description: "Get a specific customer"
+        responses: 
+            200:
+              body: 
+                application/json:
+                    type: customer
+      put:
+        description: "Replace customers inforamtion"
+        body:
+          application/json:
+             type: customer
+        responses: 
+          204:
+      /bankAccounts:
+         get:
+            description: "Accounts for the customer"
+            body: 
+              application/json:
+                 type: bankAccount[]
+         post:
+            description: "Create a new account for the customer"
+            body: 
+              application/json:
+                type: bankAccount
+            responses: 
+              201:
+         /{account_id}:
+            delete:
+              description: "Delete an account (mark deleted)."
+              responses: 
+                204:
+
+/transfers:
+   type:  { collection : {"queryParamName":customer_id} }
+   get:
+     description: "Get all transfers"
+     queryParameters: 
+        readLimit:
+           type: number
+           default: 100
+           required: false
+           maximum: 100000
+     responses: 
+        200:
+          body: 
+             application/json:
+               type: transfer[]
+   post:
+    body: 
+      application/json:
+         type: transfer
+    responses: 
+      201:          
+
+   /{transfer_id}:
+      uriParameters: 
+          transfer_id:
+            type: string
+            example: "kjhfd93dhfsio83-2346hju"
+      get:
+        description: "Get particular transfer"
+        responses: 
+          200: 
+            body: 
+              application/json:
+                type: transfer
+                
+

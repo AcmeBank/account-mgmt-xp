@@ -1,0 +1,26 @@
+{
+  "configs": [
+    "account-mgmt-xp.xml"
+  ],
+  "secureProperties": [],
+  "redeploymentEnabled": true,
+  "name": "account-mgmt-xp",
+  "minMuleVersion": "4.1.1",
+  "requiredProduct": "MULE_EE",
+  "classLoaderModelLoaderDescriptor": {
+    "id": "mule",
+    "attributes": {
+      "exportedResources": [
+        "api\\account-mgmt-xp.raml",
+        "api\\bank-account.json",
+        "api\\customer.json",
+        "api\\exchange.json",
+        "api\\transfer.json"
+      ]
+    }
+  },
+  "bundleDescriptorLoader": {
+    "id": "mule",
+    "attributes": {}
+  }
+}
